@@ -14,8 +14,8 @@ public class PassiveSkill_BuQu: PassiveSkill
 	{
 		float rnd = Random.Range (0, 100);
 		if (rnd < 50) {
-			NinJaController enemy = data as NinJaController;
-			parentController.health += parentController.maxhealth*0.03;
+			//NinJaController enemy = data as NinJaController;
+			parentController.health += parentController.maxhealth*0.03f;
 		}
 
 	}

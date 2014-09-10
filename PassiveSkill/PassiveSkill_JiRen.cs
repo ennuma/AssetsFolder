@@ -15,7 +15,7 @@ public class PassiveSkill_JiRen: PassiveSkill
 		NinJaController enemy = data as NinJaController;
 		DefendBuff buff = new DefendBuff ();
 		buff.duration = 10f;
-		buff.affectValue = -enemy.getDefence * 0.1f;
+		buff.affectValue = (-enemy.getDefence() * 0.1f);
 		gameCtrl.attachBuffToEntityController (buff, enemy);
 
 	}
