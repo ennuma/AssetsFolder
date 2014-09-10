@@ -1,9 +1,9 @@
 using UnityEngine;
 using System.Collections;
 /**
-激励，自身攻击力提升5%
+金刚不坏，自身防御力提升5%
  **/
-public class PassiveSkill_JiLi : PassiveSkill
+public class PassiveSkill_JinGangBuHuai: PassiveSkill
 {
 	public override void init(){
 		phase = PassiveSkill.Phase.Start;
@@ -11,9 +11,9 @@ public class PassiveSkill_JiLi : PassiveSkill
 
 	public override void activeSkill(Object data)
 	{
-		AttackBuff atkbuff = new AttackBuff ();
+		DefendBuff atkbuff = new DefendBuff ();
 		atkbuff.duration = 3600;
-		atkbuff.affectValue = (float)(parentController.getAttack () * 0.05);
+		atkbuff.affectValue = (float)(parentController.getDefence () * 0.05);
 		gameCtrl.attachBuffToEntityController (atkbuff, parentController);
 	}
 }

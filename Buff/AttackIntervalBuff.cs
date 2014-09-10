@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class AttackIntervalBuff : Buff
+public class SpeedBuff : Buff
 {
 	
 	public float affectValue;
@@ -18,16 +18,16 @@ public class AttackIntervalBuff : Buff
 		}
 
 	protected override void Begin(){
-		float currentV = parentController.getVelocity ();
+		float currentV = parentController.getAtkInterval ();
 		float resultV = currentV + affectValue;
-		parentController.setVelocity (resultV);
+		parentController.setAttack (resultV);
 	}
 
 	protected override void End(){
-		float currentV = parentController.getVelocity ();
-		float resultV = currentV - affectValue;
-		parentController.setVelocity (resultV);
-		Debug.Log (resultV);
+		float currentV = parentController.getAtkInterval ();
+		float resultV = currentV - affectValue+duration;
+		parentController.setAtkInterval (resultV);
+		//Debug.Log (resultV);
 	}
 	
 }

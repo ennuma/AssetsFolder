@@ -29,7 +29,7 @@ public class PassiveSkill
 
 	}
 
-	public virtual void activeSkill()
+	public virtual void activeSkill(Object data)
 	{
 
 	}

@@ -23,8 +23,8 @@ public class NinJaController : MonoBehaviour {
 	protected bool isCasting = false;
 	protected bool hasCast = false;
 
-	protected int maxhealth = 30;
-	public int health;
+	public int maxhealth = 30;
+	public float health;
 	public float attack = 10;
 	protected float defence = 10;
 	protected float lucky = 10;
@@ -86,10 +86,10 @@ public class NinJaController : MonoBehaviour {
 		//test for buff
 		SpeedBuff spdbuff = new SpeedBuff ();
 		spdbuff.affectValue = 3.0f;
-		spdbuff.duration = 1.0f;
+		spdbuff.duration = 3.0f;
 		ctrl.attachBuffToEntityController (spdbuff, this);
 
-		PassiveSkill_JiLi skl1 = new PassiveSkill_JiLi ();
+		PassiveSkill_ManTianGuoHai skl1 = new PassiveSkill_ManTianGuoHai ();
 		learnPassiveSkill (skl1);
 		//------------------------------------
 
@@ -97,7 +97,7 @@ public class NinJaController : MonoBehaviour {
 		foreach (PassiveSkill skl in passiveSkillList) {
 			if(skl.phase == PassiveSkill.Phase.Start)
 			{
-				skl.activeSkill();
+				skl.activeSkill(null);
 			}
 		}
 	}
@@ -113,7 +113,6 @@ public class NinJaController : MonoBehaviour {
 			_attackCoolDown = 0;		
 		}
 		//renderer.sortingOrder = (int)transform.position.y;
-
 	}
 	// Update is called once per frame
 	void FixedUpdate () {
@@ -331,6 +330,7 @@ public class NinJaController : MonoBehaviour {
 		onMove ();
 	}
 	protected void onDeadHandler(){
+
 		if (!isDead) {
 			onDead ();
 		}
@@ -349,15 +349,34 @@ public class NinJaController : MonoBehaviour {
 	}
 	public void takeDamageFromEnemy(NinJaController other){
 		float dechealth = other.attack;
+		dechealth *= physicalHurtMultiplier;
 		health = (int)(health - dechealth);
+		//=--------------------------------
+		//trigger passive skill
+		foreach (PassiveSkill skl in passiveSkillList) {
+			if(skl.phase == PassiveSkill.Phase.Defend)
+			{
+				skl.activeSkill(other);
+			}
+		}
+		//--------------------------------
 		updateHealthBar ();
 		if (health <= 0) {
 			state = State.Dead;	
-
+			//==========================
+			//trigger passive skill
+			foreach (PassiveSkill skl in passiveSkillList) {
+				if(skl.phase == PassiveSkill.Phase.Dead)
+				{
+					skl.activeSkill(null);
+				}
+			}
+			//===========================
 		}
 	}
 	public void takeDamageFromMagic(MagicController other){
-		int dechealth = (int)other.attack;
+		float dechealth = (float)other.attack;
+		dechealth *= magicHurtMultiplier;
 		//Debug.Log (other.attack);
 		health -= dechealth;
 		updateHealthBar ();
@@ -368,7 +387,15 @@ public class NinJaController : MonoBehaviour {
 		//
 		if (health <= 0) {
 			state = State.Dead;	
-			
+			//==========================
+			//trigger passive skill
+			foreach (PassiveSkill skl in passiveSkillList) {
+				if(skl.phase == PassiveSkill.Phase.Dead)
+				{
+					skl.activeSkill(null);
+				}
+			}
+			//===========================
 		}
 	}
 	protected void flipFacing(){
@@ -393,6 +420,14 @@ public class NinJaController : MonoBehaviour {
 		animator.SetBool ("setAttack", true);
 		attackTarget = targetEnemy;
 		isFighting = true;
+
+		//trigger passive here
+		foreach (PassiveSkill skl in passiveSkillList) {
+			if(skl.phase == PassiveSkill.Phase.Attack)
+			{
+				skl.activeSkill(attackTarget);
+			}
+		}
 	}
 	protected void onMove(){
 		//float velo = Vector2.SqrMagnitude (rigidbody2D.velocity);
@@ -524,6 +559,14 @@ public class NinJaController : MonoBehaviour {
 	{
 		buffTimeElapseMultiplier = tm;
 	}
+	public float getAtkInterval()
+	{
+		return _attackCoolDown;
+	}
+	public void setAtkInterval(float mp)
+	{
+		_attackCoolDown = mp;
+	}
 	public void setWild(bool b)
 	{
 		if (b) {
@@ -566,5 +609,9 @@ public class NinJaController : MonoBehaviour {
 		skill.parentController = this;
 		skill.gameCtrl = ctrl;
 		skill.init ();
+	}
+	public void revive()
+	{
+		state = State.Find;
 	}
 }

@@ -28,7 +28,7 @@ public class Buff
 
 	}
 
-	public void elapse(float decBuffTime)
+	public virtual void elapse(float decBuffTime)
 	{
 		//Debug.Log (duration);
 		duration -= decBuffTime;

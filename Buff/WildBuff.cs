@@ -4,7 +4,7 @@ using System.Collections;
 public class WildBuff : Buff
 {
 	
-	public float affectValue;
+	//public float affectValue;
 		// Use this for initialization
 		void Start ()
 		{
