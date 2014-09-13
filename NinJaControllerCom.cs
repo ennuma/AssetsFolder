@@ -46,6 +46,9 @@ public class NinJaControllerCom : NinJaController {
 		updateManaBar ();
 		if (currentMana > manaRequiredToCast) {
 			canCast = true;
+			if(!activeSkillButtonPressed){
+				activeSkillButtonPressed = true;
+			}
 			currentMana = manaRequiredToCast;			
 		}
 		//Debug.Log (currentMana);

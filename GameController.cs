@@ -9,6 +9,7 @@ public class GameController : MonoBehaviour {
 	public List<NinJaController> leftEntities;
 	public List<NinJaController> rightEntities;
 	public GameObject magicContainer;
+	public UIController uiCtrl;
 	List<GameObject> list = new List<GameObject> ();
 	protected List<MagicController> magicList = new List<MagicController>();
 	// Use this for initialization
@@ -22,6 +23,8 @@ public class GameController : MonoBehaviour {
 			temp.side = Side.rightSide;
 			list.Add(temp.gameObject);
 		}
+
+		uiCtrl.initUIWithGeneralControllers (leftEntities);
 	}
 	
 	// Update is called once per frame
@@ -77,6 +80,15 @@ public class GameController : MonoBehaviour {
 	public void attackEnemyController(NinJaController from, NinJaController to)
 	{
 		to.takeDamageFromEnemy (from);
+	}
+	public void attackEnemyControllerRange(NinJaController from, NinJaController to)
+	{
+		GameObject dart = Instantiate (Resources.Load ("prefab/darts")) as GameObject;
+		dart.transform.position = from.transform.Find ("rangeAttackPoint").transform.position;
+		rangeBullet rb = dart.GetComponent<rangeBullet> ();
+		rb.target = to;
+		rb.owner = from;
+		//to.takeDamageFromEnemy (from);
 	}
 	public void entityDead(NinJaController entity){
 		Debug.Log("dead");
@@ -195,4 +207,11 @@ public class GameController : MonoBehaviour {
 		}
 		buffDeleteList.Clear ();
 	}
+	public void readyToCast(NinJaController entity){
+		uiCtrl.readyToCast (entity);
+	}
+	public void finishCast(NinJaController entity){
+		//nothing need to do now
+	}
+
 }

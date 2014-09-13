@@ -9,7 +9,8 @@ public class NinJaController : MonoBehaviour {
 	public float attackCoolDown;
 	public bool isDead = false;
 	public float manaSpeed = 10;
-	
+	public bool activeSkillButtonPressed = false;
+
 	protected float currentMana = 0;
 	protected float manaRequiredToCast = 1000;
 	protected bool isFacingRight;
@@ -151,6 +152,9 @@ public class NinJaController : MonoBehaviour {
 		updateManaBar ();
 		if (currentMana > manaRequiredToCast) {
 			canCast = true;
+			if(!activeSkillButtonPressed){
+				ctrl.readyToCast(this);
+			}
 			currentMana = manaRequiredToCast;		
 		}
 
@@ -233,6 +237,8 @@ public class NinJaController : MonoBehaviour {
 		hasCast = false;
 		isCasting = false;
 		canCast = false;
+		activeSkillButtonPressed = false;
+		ctrl.finishCast (this);
 		currentMana = 0.0f;
 		ManaBarConfig config = transform.GetComponentInChildren(typeof(ManaBarConfig)) as ManaBarConfig;
 		config.reset ();
@@ -241,7 +247,6 @@ public class NinJaController : MonoBehaviour {
 	protected void onFightHandler(){
 		if (tryCastMagic ()) {
 			//ctrl.pauseForSeconds (1.0f);
-			state = State.Cast;
 			return;
 		}
 
@@ -257,10 +262,12 @@ public class NinJaController : MonoBehaviour {
 	}
 	protected bool tryCastMagic(){
 		if (canCast) {
-			//if (Input.GetMouseButtonDown (0)) {
+			if (activeSkillButtonPressed) {
 				//return true;	
-			//}
-			return true;		
+				state = State.Cast;
+				//canCast = false;
+				return true;		
+			}
 		}
 
 		return false;
@@ -303,10 +310,10 @@ public class NinJaController : MonoBehaviour {
 		}
 		return true;
 	}
-	protected void onFindHandler(){
+	protected virtual void onFindHandler(){
 		if (tryCastMagic ()) {
 			//ctrl.pauseForSeconds (1.0f);
-			state = State.Cast;
+			//state = State.Cast;
 			return;
 		}
 
@@ -315,6 +322,7 @@ public class NinJaController : MonoBehaviour {
 		}
 		if (targetEnemy == null) {
 			Debug.Log("victory");
+			onIdle();
 			//ctrl.pauseAllEntityAndMagic();
 			return;
 		}
@@ -405,7 +413,7 @@ public class NinJaController : MonoBehaviour {
 		transform.localScale = scale;
 	}
 
-	protected void attackCallBackFunc(){
+	protected virtual void attackCallBackFunc(){
 		animator.SetBool ("setAttack", false);
 		isFighting = false;
 		ctrl.attackEnemyController (this, attackTarget);
